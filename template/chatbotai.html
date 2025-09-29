@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Energy Saver Chatbot Widget</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  body { font-family: 'Poppins', sans-serif; margin: 0; }
+  #chatWidgetBtn {
+    position: fixed; bottom: 20px; right: 20px;
+    background: #00ffcc; color: #000; border: none;
+    border-radius: 50%; width: 60px; height: 60px;
+    font-size: 30px; cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 255, 204, 0.6);
+  }
+  #chatWidget {
+    position: fixed; bottom: 90px; right: 20px;
+    width: 320px; height: 450px;
+    background: linear-gradient(145deg, #1e1e2f, #27293d);
+    border-radius: 20px; border: 2px solid #00ffcc;
+    display: none; flex-direction: column; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 255, 200, 0.3);
+  }
+  #chatHeader {
+    background: #00ffcc; color: #000;
+    text-align: center; font-weight: bold; padding: 10px;
+  }
+  #langSelect {
+    width: 95%; margin: 5px auto; padding: 5px;
+    background: #222; color: #fff; border: none;
+    font-size: 14px; display: block; border-radius: 5px;
+  }
+  #chatBox {
+    flex: 1; padding: 8px; overflow-y: auto;
+  }
+  .message {
+    margin: 6px 0; padding: 8px 12px;
+    border-radius: 12px; max-width: 75%;
+    line-height: 1.4; word-wrap: break-word;
+  }
+  .user {
+    background: #1e90ff; color: #fff; margin-left: auto;
+    text-align: right;
+  }
+  .bot {
+    background: #333; color: #00ffcc; margin-right: auto;
+  }
+  .typing {
+    font-style: italic; color: #aaa; margin: 5px 0;
+  }
+  #chatInputContainer {
+    display: flex; border-top: 1px solid #444;
+  }
+  #chatInput {
+    flex: 1; padding: 10px; border: none;
+    outline: none; font-size: 14px; background: #222;
+    color: #fff;
+  }
+  #sendBtn {
+    padding: 10px 12px; border: none;
+    background: #00ffcc; color: #000;
+    font-weight: bold; cursor: pointer;
+  }
+  #sendBtn:hover {
+    background: #00cc99;
+  }
+</style>
+</head>
+<body>
+
+<button id="chatWidgetBtn">💡</button>
+
+<div id="chatWidget">
+  <div id="chatHeader">Energy Saver Bot</div>
+  <select id="langSelect">
+    <option value="en">English</option>
+    <option value="ta">Tamil</option>
+    <option value="hi">Hindi</option>
+  </select>
+  <div id="chatBox"></div>
+  <div id="chatInputContainer">
+    <input type="text" id="chatInput" placeholder="Ask me something..." />
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+  const chatBtn = document.getElementById('chatWidgetBtn');
+  const chatWidget = document.getElementById('chatWidget');
+  chatBtn.addEventListener('click', () => {
+    const isVisible = chatWidget.style.display === 'flex';
+    chatWidget.style.display = isVisible ? 'none' : 'flex';
+    chatWidget.style.flexDirection = 'column';
+  });
+
+  // Appliance power data: watts and average daily hours
+  const applianceData = {
+    AC: { powerWatts: 1500, avgHoursPerDay: 8 },
+    Fridge: { powerWatts: 150, avgHoursPerDay: 24 },
+    Fan: { powerWatts: 75, avgHoursPerDay: 12 },
+    TV: { powerWatts: 100, avgHoursPerDay: 5 },
+    Light: { powerWatts: 15, avgHoursPerDay: 6 }
+  };
+
+  // Predefined chatbot FAQs
+  const responses = [
+    {
+      keywords: ["save electricity in summer","tips","electicity saving tips"],
+      reply: {
+        en: ["☀️ Tips for summer electricity saving:",
+          "✅ Use fans instead of AC",
+          "🌡 Keep AC temperature 24–26°C",
+          "🪟 Close curtains",
+          "🧺 Use washing machines at night"],
+        ta: ["☀️ கோடை மாசத்தில் மின்சாரத்தை சேமிப்பதற்கான குறிப்புகள்:",
+          "✅ ACக்குச் பதிலாக விசிறிகளை பயன்படுத்தவும்",
+          "🌡 AC வெப்பநிலை 24–26°C வைக்கவும்",
+          "🪟 پردரைகள் மூடவும்",
+          "🧺 இரவில் துவைக்கும் இயந்திரங்களை பயன்படுத்தவும்"],
+        hi: ["☀️ गर्मी में बिजली बचाने के उपाय:",
+          "✅ AC की जगह पंखे का उपयोग करें",
+          "🌡 AC तापमान 24–26°C रखें",
+          "🪟 पर्दे बंद करें",
+          "🧺 रात में वॉशिंग मशीन का उपयोग करें"]
+      }
+    },
+    // ... add other responses here as needed
+  ];
+
+  // Levenshtein distance for fuzzy matching
+  function levenshtein(a, b) {
+    const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+    for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+    for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) {
+        dp[i][j] = a[i - 1] === b[j - 1]
+          ? dp[i - 1][j - 1]
+          : Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1;
+      }
+    }
+    return dp[a.length][b.length];
+  }
+
+  // Find best matched response based on keywords
+  function findBestMatch(text) {
+    text = text.toLowerCase().trim();
+    let best = null, minDist = Infinity;
+    for (const item of responses) {
+      for (const k of item.keywords) {
+        const keyword = k.toLowerCase();
+        if (text.includes(keyword) || keyword.includes(text)) return item;
+        const dist = levenshtein(text, keyword);
+        if (dist <= Math.min(keyword.length / 2, 3) && dist < minDist) {
+          minDist = dist;
+          best = item;
+        }
+      }
+    }
+    return best;
+  }
+
+  // Append chat messages to chatBox
+  function appendMessage(sender, text) {
+    const msg = document.createElement('div');
+    msg.className = 'message ' + sender;
+    msg.innerText = text;
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  // Typing simulation and reply display
+  function typeMessage(replyArr) {
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.innerText = 'Energy Bot is typing...';
+    chatBox.appendChild(typing);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    setTimeout(() => {
+      chatBox.removeChild(typing);
+      replyArr.forEach((line, i) => setTimeout(() => appendMessage('bot', line), i * 1200));
+    }, 1000);
+  }
+
+  // Bill estimation calculation
+  function estimateBill(selectedAppliances, days, tariffRate) {
+    let totalKWh = 0;
+    selectedAppliances.forEach(app => {
+      if (applianceData[app]) {
+        const { powerWatts, avgHoursPerDay } = applianceData[app];
+        const dailyConsumption = (powerWatts * avgHoursPerDay) / 1000;
+        totalKWh += dailyConsumption;
+      }
+    });
+    totalKWh *= days;
+    const billAmount = totalKWh * tariffRate;
+    return { totalKWh: totalKWh.toFixed(2), billAmount: billAmount.toFixed(2) };
+  }
+
+  // Extract appliances, days, tariff from user query
+  function parseEstimationRequest(text) {
+    const appliancesAvailable = Object.keys(applianceData).map(a => a.toLowerCase());
+    text = text.toLowerCase();
+
+    let selectedApps = [];
+    appliancesAvailable.forEach(app => {
+      if (text.includes(app.toLowerCase())) selectedApps.push(capitalize(app));
+    });
+
+    let daysMatch = text.match(/(\d+)\s*days?/);
+    let days = daysMatch ? parseInt(daysMatch[1]) : 30;
+
+    let rateMatch = text.match(/(\d+(\.\d+)?)\s*(rs|₹)\s*per\s*(kwh|unit)/);
+    let rate = rateMatch ? parseFloat(rateMatch[1]) : 7;
+
+    return { selectedApps, days, rate };
+  }
+
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  // Handle sending user messages
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    appendMessage('user', text);
+    chatInput.value = '';
+    const lang = langSelect.value;
+
+    if (/bill|estimate|cost|charge|price/.test(text.toLowerCase())) {
+      const { selectedApps, days, rate } = parseEstimationRequest(text);
+      if (selectedApps.length === 0) {
+        appendMessage('bot', "⚠️ Please mention which appliances you want to estimate for, e.g., AC, Fridge.");
+        return;
+      }
+      const { totalKWh, billAmount } = estimateBill(selectedApps, days, rate);
+      const reply = [
+        `For ${selectedApps.join(", ")} used daily for ${days} days,`,
+        `estimated electricity consumption is ${totalKWh} kWh.`,
+        `The approximate bill amount at Rs ${rate} per kWh is Rs ${billAmount}.`
+      ];
+      typeMessage(reply);
+      return;
+    }
+
+    const matched = findBestMatch(text);
+    if (matched) {
+      typeMessage(matched.reply[lang] || matched.reply['en']);
+    } else {
+      const fallback = {
+        en: "❓ I'm not sure about that. Try asking: 'How to save electricity?'",
+        ta: "❓ நான் அதில் நிச்சயம் இல்லை. கேளுங்கள்: 'மின்சாரத்தை எப்படி சேமிப்பது?'",
+        hi: "❓ मुझे इसका पता नहीं है। पूछें: 'बिजली कैसे बचाएं?'"
+      };
+      appendMessage('bot', fallback[lang]);
+    }
+  }
+
+  // References to DOM elements
+  const chatBox = document.getElementById('chatBox');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const langSelect = document.getElementById('langSelect');
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', e => { if(e.key === 'Enter') sendMessage(); });
+</script>
+
+</body>
+</html>

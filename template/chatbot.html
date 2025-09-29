@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Energy Saver Chatbot Widget</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Poppins', sans-serif; margin: 0; }
+    #chatWidgetBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00ffcc;
+      color: #000;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,255,204,0.6);
+    }
+    #chatWidget {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      height: 450px;
+      background: linear-gradient(145deg,#1e1e2f,#27293d);
+      border-radius: 20px;
+      border: 2px solid #00ffcc;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,255,200,0.3);
+    }
+    #chatHeader {
+      background: #00ffcc;
+      color: #000;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px;
+    }
+    #langSelect {
+      width: 95%;
+      margin: 5px auto;
+      padding: 5px;
+      background: #222;
+      color: #fff;
+      border: none;
+      font-size: 14px;
+      display: block;
+      border-radius: 5px;
+    }
+    #chatBox {
+      flex: 1;
+      padding: 8px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 6px 0;
+      padding: 8px 12px;
+      border-radius: 12px;
+      max-width: 75%;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+    .user {
+      background: #1e90ff;
+      color: #fff;
+      margin-left: auto;
+      text-align: right;
+    }
+    .bot {
+      background: #333;
+      color: #00ffcc;
+      margin-right: auto;
+    }
+    .typing {
+      font-style: italic;
+      color: #aaa;
+      margin: 5px 0;
+    }
+    #chatInputContainer {
+      display: flex;
+      border-top: 1px solid #444;
+    }
+    #chatInput {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      background: #222;
+      color: #fff;
+    }
+    #sendBtn {
+      padding: 10px 12px;
+      border: none;
+      background: #00ffcc;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #sendBtn:hover {
+      background: #00cc99;
+    }
+  </style>
+</head>
+
+<body>
+
+  <button id="chatWidgetBtn">💡</button>
+
+  <div id="chatWidget">
+    <div id="chatHeader">Energy Saver Bot</div>
+    <select id="langSelect">
+      <option value="en">English</option>
+      <option value="ta">Tamil</option>
+      <option value="hi">Hindi</option>
+    </select>
+    <div id="chatBox"></div>
+    <div id="chatInputContainer">
+      <input type="text" id="chatInput" placeholder="Ask me something..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBtn = document.getElementById('chatWidgetBtn');
+    const chatWidget = document.getElementById('chatWidget');
+    chatBtn.addEventListener('click', () => {
+      chatWidget.style.display = chatWidget.style.display === 'flex' ? 'none' : 'flex';
+      chatWidget.style.flexDirection = 'column';
+    });
+
+    const responses = [
+      {
+        keywords: ["save electricity in summer"],
+        reply: {
+          en: ["☀️ Tips for summer electricity saving:", "✅ Use fans instead of AC", "🌡 Keep AC temperature 24–26°C", "🪟 Close curtains", "🧺 Use washing machines at night"],
+          ta: ["☀️ கோடை மாசத்தில் மின்சாரத்தை சேமிப்பதற்கான குறிப்புகள்:", "✅ ACக்குப் பதிலாக விசிறிகளை பயன்படுத்தவும்", "🌡 AC வெப்பநிலை 24–26°C வைக்கவும்", "🪟 پردரைகள் மூடவும்", "🧺 இரவில் துவைக்கும் இயந்திரங்களை பயன்படுத்தவும்"],
+          hi: ["☀️ गर्मी में बिजली बचाने के उपाय:", "✅ AC की जगह पंखे का उपयोग करें", "🌡 AC तापमान 24–26°C रखें", "🪟 पर्दे बंद करें", "🧺 रात में वॉशिंग मशीन का उपयोग करें"]
+        }
+      },
+      {
+        keywords: ["how to pay eb bill", "pay electricity bill", "eb bill payment"],
+        reply: {
+          en: ["💡 You can check your EB Bill Status here:", "🔗 https://www.tnpdcl.gov.in/BillStatus/billstatus.xhtml"],
+          ta: ["💡 உங்கள் மின்சாரக் கணக்கை இங்கே பார்க்கலாம்:", "🔗 https://www.tnpdcl.gov.in/BillStatus/billstatus.xhtml"],
+          hi: ["💡 आप अपना बिजली बिल यहाँ चेक कर सकते हैं:", "🔗 https://www.tnpdcl.gov.in/BillStatus/billstatus.xhtml"]
+        }
+      },
+      {
+        keywords: ["eb customer care number", "eb helpline", "electricity helpline"],
+        reply: {
+          en: ["📞 EB Customer Care Number: 1800-425-1234"],
+          ta: ["📞 மின் வாடிக்கையாளர் கேர்நம்பர்: 1800-425-1234"],
+          hi: ["📞 बिजली ग्राहक सेवा नंबर: 1800-425-1234"]
+        }
+      },
+      {
+        keywords: ["eb complaint number", "eb grievance", "eb support number"],
+        reply: {
+          en: ["📞 For complaints, call: 94443-12345"],
+          ta: ["📞 புகார்கள் பதிவு எண்: 94443-12345"],
+          hi: ["📞 शिकायत हेतु नंबर: 94443-12345"]
+        }
+      },
+      {
+        keywords: ["eb technical support", "eb emergency number", "eb outage support"],
+        reply: {
+          en: ["⚡ In case of outage or technical support, call: 94444-67890"],
+          ta: ["⚡ மின் சேவை குறைபாடுகள் அல்லது ஆபத்துகால உதவி: 94444-67890"],
+          hi: ["⚡ तकनीकी सहायता या आपातकालीन स्थिति हेतु: 94444-67890"]
+        }
+      },
+      {
+        keywords: ["save electricity in winter"],
+        reply: {
+          en: ["❄️ Winter electricity saving tips:", "🛏 Use blankets instead of heaters", "☀️ Use sunlight", "🔌 Turn off unused electronics"],
+          ta: ["❄️ குளிர்காலத்தில் மின்சார சேமிப்பு:", "🛏 ஹீட்டர் பதிலாக கம்பளிகள் பயன்படுத்தவும்", "☀️ சூரிய ஒளியை பயன்படுத்தவும்", "🔌 பயன்படாத சாதனங்களை அணைக்கவும்"],
+          hi: ["❄️ सर्दी में बिजली बचाने के उपाय:", "🛏 हीटर की जगह कंबल का उपयोग करें", "☀️ सूरज की रोशनी का उपयोग करें", "🔌 अनुपयोगी उपकरण बंद करें"]
+        }
+      },
+      {
+        keywords: ["save electricity", "electricity saving", "tips"],
+        reply: {
+          en: ["💡 General electricity saving tips:", "✅ Switch off Fan, AC, Lights when not in use", "💡 Use LED bulbs", "🔌 Unplug chargers", "⚡ Use energy-efficient devices"],
+          ta: ["💡 பொதுவான மின்சார சேமிப்பு:", "✅ விசிறி, AC, விளக்குகளை அணைக்கவும்", "💡 LED விளக்குகள் பயன்படுத்தவும்", "🔌 சார்ஜர்கள் அகற்றவும்", "⚡ மின்சார சேமிப்புக் கருவிகள்"],
+          hi: ["💡 सामान्य बिजली बचाने के सुझाव:", "✅ पंखा, AC, लाइट बंद करें", "💡 LED बल्ब", "🔌 चार्जर अनप्लग करें", "⚡ ऊर्जा-कुशल उपकरण"]
+        }
+      },
+      {
+        keywords: ["what fan to use", "best fan", "fan type"],
+        reply: {
+          en: ["🌀 Use ceiling fans or energy-efficient BLDC fans", "✅ They consume less electricity and cool better"],
+          ta: ["🌀 சில்லிங் விசிறி அல்லது BLDC விசிறி பயன்படுத்தவும்", "✅ இது குறைந்த மின்சாரம் பயன்படுகிறது மற்றும் சிறந்த கcooling தருகிறது"],
+          hi: ["🌀 सीलिंग फैन या BLDC फैन का उपयोग करें", "✅ यह कम बिजली खपत करता है और बेहतर ठंडक देता है"]
+        }
+      },
+      {
+        keywords: ["what light to use", "best light", "light type"],
+        reply: {
+          en: ["💡 Use LED bulbs instead of incandescent or CFL", "✅ LEDs consume less power and last longer"],
+          ta: ["💡 இன்கான்டஸன்ட் அல்லது CFL பதிலாக LED விளக்குகள் பயன்படுத்தவும்", "✅ LED கம்பிகள் குறைந்த மின்சாரம் பயன்படுத்துகிறது மற்றும் நீண்ட காலம் நீடிக்கும்"],
+          hi: ["💡 इनकैंडेसेंट या CFL के बजाय LED बल्ब का उपयोग करें", "✅ LEDs कम बिजली खपत करते हैं और लंबे समय तक चलते हैं"]
+        }
+      },
+      {
+        keywords: ["tv electricity", "what tv to use", "tv energy saving"],
+        reply: {
+          en: ["📺 Use LED or Smart TVs with energy-saving mode", "✅ Avoid leaving TV on standby for long periods"],
+          ta: ["📺 எர்ஜி சேமிப்பு முறை கொண்ட LED அல்லது ஸ்மார்ட் TV பயன்படுத்தவும்", "✅ TV ஸ்டேண்ட்பை அனாவசியமாக நீண்ட நேரம் வைக்காதீர்கள்"],
+          hi: ["📺 ऊर्जा बचाने वाले मोड के साथ LED या स्मार्ट TV का उपयोग करें", "✅ TV को स्टैंडबाय में लंबे समय तक न छोड़ें"]
+        }
+      },
+      {
+        keywords: ["hi", "hello", "hey"],
+        reply: {
+          en: ["👋 Hey! How are you?"],
+          ta: ["👋 ஹாய்! எப்படி இருக்கீர்கள்?"],
+          hi: ["👋 हाय! आप कैसे हैं?"]
+        }
+      },
+      {
+        keywords: ["fine", "I am fine"],
+        reply: {
+          en: ["😊 That's good to hear!"]
+        }
+      },
+      {
+        keywords: ["how are you", "what about you"],
+        reply: {
+          en: ["🤖 I'm doing great! How about you?"],
+          ta: ["🤖 நான் நன்றாக இருக்கிறேன்! நீங்கள் எப்படி இருக்கிறீர்கள்?"],
+          hi: ["🤖 मैं ठीक हूँ! आप?"]
+        }
+      },
+      {
+        keywords: ["what is your name"],
+        reply: {
+          en: ["💡 I am Energy Saver Bot"],
+          ta: ["💡 நான் எர்ஜி சேவர் பாட்டா"],
+          hi: ["💡 मैं एनर्जी सेवर बॉट हूँ"]
+        }
+      },
+      {
+        keywords: ["thanks", "thank you"],
+        reply: {
+          en: ["😊 You're welcome!"],
+          ta: ["😊 நீங்கள் வரவேற்கப்படுகிறீர்கள்!"],
+          hi: ["😊 आपका स्वागत है!"]
+        }
+      },
+      {
+        keywords: ["rooftop solar", "solar benefits", "solar subsidy", "solar contact", "solar installation"],
+        reply: {
+          en: [
+            "🌞 Benefits of Rooftop Solar Systems:",
+            "✅ Reduces electricity bills significantly",
+            "✅ Environment-friendly, reduces carbon footprint",
+            "✅ Energy independence and backup during power cuts",
+            "💸 Subsidy: Up to 40% subsidy is provided by MNRE (Ministry of New and Renewable Energy)",
+            "📞 Contact TANGEDCO for installation assistance: 1800-425-1234",
+            "🔗 More details: https://mnre.gov.in/solar-rooftop"
+          ],
+          ta: [
+            "🌞 கூரை சோலார் அமைப்புகளின் நன்மைகள்:",
+            "✅ மின்சாரக் கட்டணத்தை குறைக்கிறது",
+            "✅ சுற்றுச்சூழலுக்கு நல்லது, கார்பன் அடையாளத்தை குறைக்கிறது",
+            "✅ மின்விளக்கங்கள் முடக்கப்பட்டாலும் ஆற்றல் சுயாதீனம்",
+            "💸 மானியம்: MNRE மூலம் 40% வரை மானியம் வழங்கப்படுகிறது",
+            "📞 நிறுவ உதவி: TANGEDCO 1800-425-1234",
+            "🔗 மேலும் விவரங்களுக்கு: https://mnre.gov.in/solar-rooftop"
+          ],
+          hi: [
+            "🌞 रूफटॉप सोलर सिस्टम के फायदे:",
+            "✅ बिजली बिल में महत्वपूर्ण बचत",
+            "✅ पर्यावरण के अनुकूल, कार्बन फुटप्रिंट कम करता है",
+            "✅ बिजली कटौती के समय बैकअप और ऊर्जा आत्मनिर्भरता",
+            "💸 सब्सिडी: MNRE से 40% तक सब्सिडी",
+            "📞 इंस्टॉलेशन सहायता के लिए संपर्क करें: TANGEDCO 1800-425-1234",
+            "🔗 अधिक जानकारी: https://mnre.gov.in/solar-rooftop"
+          ]
+        }
+      }
+    ];
+
+    const chatBox = document.getElementById('chatBox');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const langSelect = document.getElementById('langSelect');
+
+    function levenshtein(a, b) {
+      const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]) + 1;
+        }
+      }
+      return dp[a.length][b.length];
+    }
+
+    function findBestMatch(text) {
+      text = text.toLowerCase().trim();
+      let best = null, minDist = Infinity;
+      for (const item of responses) {
+        for (const k of item.keywords) {
+          const keyword = k.toLowerCase();
+          if (text.includes(keyword) || keyword.includes(text)) return item;
+          const dist = levenshtein(text, keyword);
+          if (dist <= Math.min(keyword.length / 2, 3) && dist < minDist) {
+            minDist = dist;
+            best = item;
+          }
+        }
+      }
+      return best;
+    }
+
+    function appendMessage(sender, text) {
+      const msg = document.createElement('div');
+      msg.className = 'message ' + sender;
+      msg.innerText = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function typeMessage(replyArr) {
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      typing.innerText = 'Energy Bot is typing...';
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
+      setTimeout(() => {
+        chatBox.removeChild(typing);
+        replyArr.forEach((line, i) =>
+          setTimeout(() => appendMessage('bot', line), i * 1200)
+        );
+      }, 1000);
+    }
+
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      appendMessage('user', text);
+      chatInput.value = '';
+      const lang = langSelect.value;
+      const matched = findBestMatch(text);
+      if (matched) {
+        typeMessage(matched.reply[lang] || matched.reply['en']);
+      } else {
+        const fallback = {
+          en: "❓ I'm not sure about that. Try asking: 'How to save electricity?'",
+          ta: "❓ நான் அதில் நிச்சயம் இல்லை. கேளுங்கள்: 'மின்சாரத்தை எப்படி சேமிப்பது?'",
+          hi: "❓ मुझे इसका पता नहीं है। पूछें: 'बिजली कैसे बचाएं?'"
+        };
+        appendMessage('bot', fallback[lang]);
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+  </script>
+
+</body>
+</html>

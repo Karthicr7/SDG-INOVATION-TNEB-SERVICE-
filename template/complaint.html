@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Register Complaint / Service Request</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background: #f4f8fb;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+    }
+    header {
+      background: #fff;
+      border-bottom: 2px solid #e4e8ef;
+      padding: 12px 0;
+    }
+    .logo {
+      font-size: 32px;
+      color: #2656a6;
+    }
+    .nav {
+      margin: 22px 0;
+      text-align: center;
+    }
+    .nav a {
+      text-decoration: none;
+      color: #2656a6;
+      font-weight: bold;
+      margin: 0 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(38, 86, 166, 0.09);
+      padding: 30px;
+    }
+    h2 {
+      font-size: 23px;
+      font-weight: bold;
+      color: #2656a6;
+      margin-bottom: 25px;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    form label,
+    .form-group label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .form-group {
+      grid-column: span 2;
+    }
+    input,
+    select,
+    textarea {
+      width: 95%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #c2d4fa;
+      font-size: 15px;
+    }
+    textarea {
+      min-height: 44px;
+      resize: vertical;
+    }
+    .required {
+      color: #e45b00;
+    }
+    .btn-actions {
+      grid-column: span 2;
+      text-align: right;
+      margin-top: 22px;
+    }
+    button {
+      background: #2656a6;
+      color: #fff;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    button.cancel {
+      background: #888;
+    }
+    .verify-img {
+      display: inline-block;
+      background: #e4e8ef;
+      padding: 8px 17px;
+      font-size: 20px;
+      font-family: 'Consolas', monospace;
+      border-radius: 6px;
+    }
+    .history-section {
+      margin-top: 25px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(38, 86, 166, 0.06);
+      padding: 30px;
+    }
+    .history-section h2 {
+      font-size: 20px;
+      color: #2656a6;
+      margin-bottom: 8px;
+    }
+    .history-section table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #f4f8fb;
+    }
+    .history-section th,
+    .history-section td {
+      padding: 9px 7px;
+      border-bottom: 1px solid #e4e8ef;
+      text-align: left;
+    }
+    .history-section th {
+      background: #eaf1fc;
+      font-weight: bold;
+    }
+    @media (max-width: 650px) {
+      .container {
+        padding: 12px;
+      }
+      form {
+        grid-template-columns: 1fr;
+      }
+      .btn-actions {
+        text-align: center;
+      }
+      .history-section {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">TNEB Services</div>
+    <nav class="nav">
+      <a href="home.html">HOME</a>
+      <a href="#">QUICK PAY</a>
+      <a href="complaint.html">REGISTER COMPLAINT/SERVICE</a>
+      <a href="#">COMPLAINT STATUS</a>
+      <a href="new_connection.html">NEW CONNECTION</a>
+      <a href="userguide.html">USER GUIDE</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container">
+      <h2>File New Complaint / Service Request</h2>
+      <form id="complaintForm">
+        <div>
+          <label>Complaint/Service Type:</label>
+          <select id="complaintType" required>
+            <option value="LINE RELATED">LINE RELATED</option>
+            <option value="BILL RELATED">BILL RELATED</option>
+            <option value="SUPPLY INTERRUPTION">SUPPLY INTERRUPTION</option>
+          </select>
+        </div>
+        <div>
+          <label>Landmark:</label>
+          <input type="text" id="landmark" placeholder="Landmark" />
+        </div>
+        <div>
+          <label>Category:</label>
+          <select id="category" required>
+            <option value="TREE BRANCHES TOUCHING/CRE">TREE BRANCHES TOUCHING/CRE</option>
+            <option value="POLE DAMAGE">POLE DAMAGE</option>
+            <option value="FALLEN WIRES">FALLEN WIRES</option>
+            <option value="Transformer Issue">Transformer Issue</option>
+          </select>
+        </div>
+        <div>
+          <label>Consumer Number:</label>
+          <input type="text" id="consumerNumber" placeholder="Consumer Number" />
+        </div>
+        <div>
+          <label>Contact Person:</label>
+          <input type="text" id="contactPerson" placeholder="Contact Person" />
+        </div>
+        <div>
+          <label class="required">*</label>
+          <label>Problem Description:</label>
+          <textarea id="problemDescription" required placeholder="Describe your problem here"></textarea>
+        </div>
+        <div>
+          <label class="required">*</label>
+          <label>Mobile Number:</label>
+          <input type="tel" id="mobileNumber" required placeholder="Mobile Number" />
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; grid-column: span 2;">
+          <textarea
+            id="address"
+            placeholder="Address"
+            style="width: 80%;"
+          ></textarea>
+          <button
+            type="button"
+            id="selectLocationBtn"
+            style="padding: 8px 14px; cursor: pointer; width: 150px;"
+          >
+            Select Location
+          </button>
+        </div>
+        <div style="grid-column: span 2; display: flex; gap: 24px;">
+          <div style="flex: 1;">
+            <label class="required">*</label>
+            <label>District:</label>
+            <select id="districtSelect" required style="width: 100%;">
+              <option value="">--Select District--</option>
+              <option value="Tirunelveli">Tirunelveli</option>
+              <option value="Madurai">Madurai</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Tirichy">Tirichy</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label class="required">*</label>
+            <label>Section / Taluk (EB Section):</label>
+            <select id="sectionSelect" required style="width: 100%;">
+              <option value="">Kindly select district first</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>CAPTCHA Code:</label>
+          <div
+            class="verify-img"
+            id="captchaCode"
+            title="Click to refresh CAPTCHA"
+            style="cursor: pointer; user-select: none;"
+          ></div>
+          <input
+            type="text"
+            id="captchaInput"
+            required
+            placeholder="Type code above"
+          />
+        </div>
+        <div class="btn-actions">
+          <button
+            class="cancel"
+            type="button"
+            onclick="document.getElementById('complaintForm').reset();"
+          >
+            Cancel
+          </button>
+          <button type="submit">Submit Complaint</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Complaint History Section -->
+    <div class="history-section">
+      <h2>Previous Complaint History</h2>
+      <div id="complaintHistory">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // EB section data mapping
+    const ebSections = {
+      Tirunelveli: [
+        "Tirunelveli North",
+        "Tirunelveli South",
+        "Manur",
+        "Ambasamudram",
+        "Nanguneri",
+        "Thisayanvilai",
+        "Radhapuram",
+        "Melapalayam",
+        "Palayamkottai",
+        "Cheranmahadevi",
+        "Alangulam",
+        "Kalakadu",
+      ],
+      Madurai: [
+        "Madurai North",
+        "Madurai South",
+        "Vadipatti",
+        "Melur",
+        "Usilampatti",
+        "Sedapatti",
+        "Harangipuram",
+        "Thirumangalam",
+        "Kottampatti",
+        "Tirupparankundram",
+      ],
+      Chennai: [
+        "Anna Nagar",
+        "Tondiarpet",
+        "Royapettah",
+        "Mylapore",
+        "Ambattur",
+        "Perambur",
+        "Tambaram",
+        "Velachery",
+        "Egmore",
+        "Guindy",
+      ],
+      Tirichy: [
+        "Tiruchirappalli East",
+        "Tiruchirappalli West",
+        "Thuraiyur",
+        "Lalgudi",
+        "Manapparai",
+        "Musiri",
+        "Srirangam",
+        "Thottiyam",
+        "Marungapuri",
+      ],
+    };
+
+    // Inject EB Sections according to district
+    const districtSelect = document.getElementById("districtSelect");
+    const sectionSelect = document.getElementById("sectionSelect");
+
+    districtSelect.addEventListener("change", function () {
+      const selectedDistrict = this.value;
+      sectionSelect.innerHTML = "";
+
+      if (!selectedDistrict || !ebSections[selectedDistrict]) {
+        sectionSelect.innerHTML =
+          '<option value="">Kindly select district first</option>';
+        return;
+      }
+
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "--Select Section--";
+      sectionSelect.appendChild(defaultOption);
+
+      ebSections[selectedDistrict].forEach((section) => {
+        const option = document.createElement("option");
+        option.value = section;
+        option.textContent = section;
+        sectionSelect.appendChild(option);
+      });
+    });
+
+    // Simple mock complaint history storage
+    let previousComplaints = [];
+
+    // Check localStorage for demo, use API for production
+    if (window.localStorage) {
+      const stored = localStorage.getItem("previousComplaints");
+      if (stored) previousComplaints = JSON.parse(stored);
+    }
+
+    // Complaint history rendering
+    function renderComplaintHistory(complaints) {
+      const container = document.getElementById("complaintHistory");
+      if (!complaints || complaints.length === 0) {
+        container.innerHTML =
+          "<div style='padding:18px 0 0 8px;'>No previous complaints yet.</div>";
+        return;
+      }
+      let html = `
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Status</th>
+          </tr>
+        </thead><tbody>
+      `;
+      complaints.forEach(item => {
+        html += `
+          <tr>
+            <td>${item.date}</td>
+            <td>${item.complaintType}</td>
+            <td>${item.category}</td>
+            <td>${item.description}</td>
+            <td>${item.status}</td>
+          </tr>
+        `;
+      });
+      html += "</tbody></table>";
+      container.innerHTML = html;
+    }
+
+    // For demo: status always Pending, current date, etc.
+    function getCurrentDate() {
+      const d = new Date();
+      return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,"0")}-${d.getDate().toString().padStart(2,"0")}`;
+    }
+
+    // Captcha generator and logic
+    const captchaChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const captchaLength = 6;
+    function generateCaptcha() {
+      let captcha = "";
+      for (let i = 0; i < captchaLength; i++) {
+        captcha += captchaChars.charAt(Math.floor(Math.random() * captchaChars.length));
+      }
+      return captcha;
+    }
+    function setCaptcha() {
+      const captchaDiv = document.getElementById("captchaCode");
+      captchaDiv.textContent = generateCaptcha();
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      setCaptcha();
+      renderComplaintHistory(previousComplaints);
+
+      document.getElementById("captchaCode").addEventListener("click", setCaptcha);
+    });
+
+    // Handle location selection (popup + message event)
+    document.getElementById("selectLocationBtn").addEventListener("click", () => {
+      window.open("location.html", "mapPopup", "width=700,height=500");
+    });
+    window.addEventListener("message", function (event) {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data;
+      if (data && data.address) {
+        const addressField = document.getElementById("address");
+        if (addressField) {
+          addressField.value = data.address;
+          addressField.focus();
+        }
+      }
+    });
+
+    // Complaint form submission
+    document
+      .getElementById("complaintForm")
+      .addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let userInput = document.getElementById("captchaInput").value.trim();
+        let actualCaptcha = document.getElementById("captchaCode").textContent.trim();
+
+        if (userInput !== actualCaptcha) {
+          alert("Incorrect CAPTCHA. Please try again.");
+          setCaptcha();
+          return;
+        }
+
+        // Gather data
+        const complaintType = document.getElementById("complaintType").value;
+        const landmark = document.getElementById("landmark").value;
+        const category = document.getElementById("category").value;
+        const consumerNumber = document.getElementById("consumerNumber").value;
+        const contactPerson = document.getElementById("contactPerson").value;
+        const description = document.getElementById("problemDescription").value;
+        const mobile = document.getElementById("mobileNumber").value;
+        const address = document.getElementById("address").value;
+        const district = document.getElementById("districtSelect").value;
+        const section = document.getElementById("sectionSelect").value;
+
+        const newComplaint = {
+          date: getCurrentDate(),
+          complaintType,
+          category,
+          description,
+          status: "Pending"
+        };
+
+        previousComplaints.unshift(newComplaint);
+        if (window.localStorage) {
+          localStorage.setItem("previousComplaints", JSON.stringify(previousComplaints));
+        }
+
+        renderComplaintHistory(previousComplaints);
+
+        alert("Complaint submitted successfully!");
+        this.reset();
+        setCaptcha();
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quick Pay - Consumer Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Arial:400,700&display=swap">
+  <style>
+    body {
+      background: #f9f9f9;
+      font-family: 'Arial', sans-serif;
+      margin: 0; padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.1);
+    }
+    h1 {
+      background: #007acc;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-top: 0;
+      font-size: 24px;
+      display: inline-block;
+    }
+    .section-title {
+      font-size: 20px;
+      color: #007acc;
+      margin-top: 25px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+    }
+    label {
+      width: 180px;
+      font-weight: bold;
+    }
+    input[type="text"], select {
+      flex: 1;
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    select {
+      background: #f1f1f1;
+      font-size: 15px;
+    }
+    .captcha-section {
+      flex-wrap: wrap; gap: 10px; align-items: flex-start;
+    }
+    .info-box {
+      background: #e1f0ff;
+      border: 1px solid #7ac4ff;
+      padding: 12px 16px;
+      border-radius: 6px;
+      color: #007acc;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+    .warning-box {
+      background: #fff0e6;
+      border: 1px solid #ffb366;
+      padding: 12px 16px;
+      border-radius: 6px;
+      color: #d97300;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+    .error-box {
+      background: #ffe6e6;
+      border: 1px solid #ff6666;
+      padding: 12px 16px;
+      border-radius: 6px;
+      color: #b30000;
+      font-size: 14px;
+      margin: 20px 0;
+    }
+    button {
+      display: block;
+      width: 200px;
+      margin: 20px auto 0 auto;
+      background: #007acc;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgb(0 122 204 / 0.4);
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #005f99;
+    }
+    .more-info {
+      color: #007acc;
+      cursor: pointer;
+      text-decoration: underline;
+      font-size: 14px;
+      margin-left: 4px;
+    }
+    .dynamic-fee {
+      font-size: 13px;
+      color: #d97300;
+      margin-left: 6px;
+      font-weight: normal;
+    }
+    @media (max-width: 600px) {
+      .container {padding:16px;}
+      label {width:140px;}
+      button {width:100%;}
+    }
+  </style>
+  <!-- Google reCAPTCHA script (replace YOUR_SITE_KEY) -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+<body>
+
+<div class="container">
+  <h1>Quick Pay</h1>
+  <div class="section-title">
+    <span>&#128221;</span>
+    Consumer Details
+  </div>
+  <form>
+    <div class="form-group">
+      <label for="consumerNo"><span style="color:#e45b00;">*</span> Consumer No:</label>
+      <input type="text" id="consumerNo" placeholder="13 digit Consumer number" required />
+    </div>
+    <div class="form-group">
+      <label for="mobileNo"><span style="color:#e45b00;">*</span> Registered Mobile Number:</label>
+      <input type="text" id="mobileNo" placeholder="Enter Mobile Number" required />
+    </div>
+    <div class="form-group">
+      <label for="paymentMethod"><span style="color:#e45b00;">*</span> Payment Method:</label>
+      <select id="paymentMethod" required onchange="updateFee()">
+        <option value="">Select Payment Method</option>
+        <option value="upi">UPI (NIL fee)</option>
+        <option value="netbanking">Net Banking (NIL fee - SBI, Canara, HDFC, Union)</option>
+        <option value="wallet">Digital Wallet (nominal fee)</option>
+        <option value="debitcard">Debit Card (0.4%-0.9% fee)</option>
+        <option value="creditcard">Credit Card (0.85%-0.9% fee)</option>
+      </select>
+      <span id="transactionFee" class="dynamic-fee"></span>
+    </div>
+    <div class="form-group captcha-section">
+      <label for="captchaInput" style="flex:none;">
+        <span style="color:#e45b00;">*</span> Security Check:
+      </label>
+      <div style="flex:1; display:flex; flex-direction:column;">
+        <!-- Google reCAPTCHA widget (site key must be set) -->
+        <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div>
+      </div>
+    </div>
+    <div class="info-box">
+      <span>&#8505;</span> Quick pay requires a registered mobile number with TNEB. To register, please sign in or contact support.
+    </div>
+    <button type="submit">Submit to see the bill</button>
+  </form>
+
+  <div class="warning-box">
+    <span>&#9888;</span> Quick payment option available for ENERGY CHARGE bills, annual ACD bills, and LED bills. Some installment bills require counter payment. Payments may update next day.
+  </div>
+
+  <div class="error-box">
+    <span>&#10006;</span> For support, email: tneb@gmail.com &nbsp;|&nbsp; Call: 1912 / 0471-2555544 (24x7 Care Center)
+  </div>
+
+  <div class="info-box" style="color:#007acc;">
+    <span>&#9432;</span> To view available payment options and transaction charges
+    <button class="more-info" onclick="openPopup()" type="button">Click Here</button>
+  </div>
+</div>
+
+<!-- Payment Option Charges Modal -->
+<div id="paymentPopup" style="display:none;">
+  <div class="popup-overlay" onclick="closePopup()"></div>
+  <div class="popup-content">
+    <button class="close-btn" onclick="closePopup()" aria-label="Close popup">&times;</button>
+    <h2>Payment Transaction Charges</h2>
+    <div class="popup-scroll">
+      <section class="charge-box">
+        <h3>UPI</h3>
+        <p>NIL for most gateways.</p>
+      </section>
+      <section class="charge-box">
+        <h3>Net Banking</h3>
+        <p>NIL for direct banks (SBI, Canara, HDFC, Union).</p>
+        <p>Nominal for other banks.</p>
+      </section>
+      <section class="charge-box">
+        <h3>Wallet</h3>
+        <p>Depends on wallet provider.</p>
+      </section>
+      <section class="charge-box">
+        <h3>Debit Card</h3>
+        <ul>
+          <li>0.40% + GST for payments below ₹2,000</li>
+          <li>0.90% + GST for payments above ₹2,000</li>
+          <li>No charge for RuPay cards</li>
+        </ul>
+      </section>
+      <section class="charge-box">
+        <h3>Credit Card</h3>
+        <p>0.85%-0.90% + GST on payment</p>
+      </section>
+    </div>
+  </div>
+  <style>
+    #paymentPopup { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999; font-family: Arial, sans-serif;}
+    .popup-overlay { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.6);}
+    .popup-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      background: white; width: 85%; max-width: 600px; border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px 30px 30px; display: flex; flex-direction: column;}
+    .close-btn { align-self: flex-end; background: transparent; border: none; font-size: 28px; cursor: pointer; color: #555;}
+    .popup-content h2 { margin: 0 0 16px 0; color: #007acc;}
+    .popup-scroll { overflow-y: auto; max-height: 400px; padding-right: 10px;}
+    .charge-box { border: 1px solid #007acc; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; background: #f0f8ff;}
+    .charge-box h3 { margin-top: 0; color: #004080;}
+    .charge-box p, .charge-box ul { margin: 6px 0; color: #333; font-size: 15px;}
+    .charge-box ul {padding-left: 20px;}
+  </style>
+</div>
+
+<!-- Payment Option Fee Update Script -->
+<script>
+function updateFee() {
+  var method = document.getElementById('paymentMethod').value;
+  var feeElem = document.getElementById('transactionFee');
+  switch(method) {
+    case 'upi': feeElem.textContent = "Fee: NIL"; break;
+    case 'netbanking': feeElem.textContent = "Fee: NIL (direct banks)"; break;
+    case 'wallet': feeElem.textContent = "Fee: Nominal, varies"; break;
+    case 'debitcard': feeElem.textContent = "Fee: 0.4%-0.9% + GST"; break;
+    case 'creditcard': feeElem.textContent = "Fee: 0.85%-0.9% + GST"; break;
+    default: feeElem.textContent = ""; break;
+  }
+}
+
+function openPopup() {
+  document.getElementById('paymentPopup').style.display = 'block';
+}
+function closePopup() {
+  document.getElementById('paymentPopup').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNEB Office Search</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
+  h1 { text-align: center; color: #333; }
+  #search-container { max-width: 500px; margin: 0 auto 20px auto; }
+  #search-bar { width: 100%; padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #ccc; }
+  #search-button { margin-top: 10px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; background-color: #0077cc; color: white; cursor: pointer; }
+  #search-button:hover { background-color: #005fa3; }
+  .office { background: #fff; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .office h2 { margin: 0 0 5px 0; color: #0077cc; }
+</style>
+</head>
+<body>
+
+<h1>TNEB Office Search</h1>
+
+<div id="search-container">
+  <input type="text" id="search-bar" placeholder="Enter your ward or area">
+  <button id="search-button">Search</button>
+</div>
+
+<div id="results"></div>
+
+<script>
+const data = {
+  "eb_offices": [
+    {
+      "area": "Chennai",
+      "office_name": "TNEB Section Office – Perungudi / Velachery",
+      "officer_name": "Mr. R. Kumar",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "044-12345678",
+      "email": "aeperungudi@tnebnet.org",
+      "address": "Perungudi Main Road, Chennai – 600096",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Chennai EDC",
+      "grievance_contact": "cgrfchennai@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. S. Ravi", "contact": "044-87654321" },
+        { "name": "Mr. K. Prakash", "contact": "044-87654322" }
+      ],
+      "wards": ["Perungudi","Velachery","Thoraipakkam","Guindy","Adyar","Saidapet","Kotturpuram","Alwarpet","Teynampet","Besant Nagar"],
+      "google_maps": "https://goo.gl/maps/xxxxx"
+    },
+    {
+      "area": "Chennai",
+      "office_name": "TNEB Section Office – T Nagar / Nungambakkam",
+      "officer_name": "Ms. S. Lakshmi",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "044-22334455",
+      "email": "aetnagar@tnebnet.org",
+      "address": "T Nagar Main Road, Chennai – 600017",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Chennai EDC",
+      "grievance_contact": "cgrfchennai@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. R. Kannan", "contact": "044-99887766" },
+        { "name": "Mr. M. Arul", "contact": "044-99887767" }
+      ],
+      "wards": ["T Nagar","Nungambakkam","Kodambakkam","Alwarpet","Mylapore","West Mambalam","Ashok Nagar","K.K. Nagar","Vadapalani","Valasaravakkam"],
+      "google_maps": "https://goo.gl/maps/yyyyy"
+    },
+    {
+      "area": "Chennai",
+      "office_name": "TNEB Section Office – Anna Nagar",
+      "officer_name": "Mr. A. Rajan",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "044-33445566",
+      "email": "aeannanagar@tnebnet.org",
+      "address": "Anna Nagar Main Road, Chennai – 600040",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Chennai EDC",
+      "grievance_contact": "cgrfchennai@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. K. Selvam", "contact": "044-33445577" },
+        { "name": "Mr. P. Ganesan", "contact": "044-33445588" }
+      ],
+      "wards": ["Anna Nagar","Villivakkam","Korattur","Sholinganallur","Pallavaram"],
+      "google_maps": "https://goo.gl/maps/zzzzz"
+    },
+    {
+      "area": "Madurai",
+      "office_name": "TNEB Section Office – Anna Nagar",
+      "officer_name": "Mr. A. Rajan",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0452-2531411",
+      "email": "aeannanagar@tnebnet.org",
+      "address": "Anna Nagar Main Road, Madurai – 625020",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Madurai EDC – Metro",
+      "grievance_contact": "cgrfmdua@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. K. Selvam", "contact": "0452-2541412" },
+        { "name": "Mr. P. Ganesan", "contact": "0452-2541413" }
+      ],
+      "wards": ["Anna Nagar","K. Pudur","Sellur","Alagarkoil","Thathaneri","Madurai East","Madurai West","Melur","Usilampatti","Tirumangalam"],
+      "google_maps": "https://goo.gl/maps/aaaaa"
+    },
+    {
+      "area": "Madurai",
+      "office_name": "TNEB Section Office – K. Pudur",
+      "officer_name": "Ms. N. Devi",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0452-2581122",
+      "email": "aekpudur@tnebnet.org",
+      "address": "K. Pudur Main Road, Madurai – 625014",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Madurai EDC – Metro",
+      "grievance_contact": "cgrfmdua@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. V. Murugan", "contact": "0452-2581133" },
+        { "name": "Mr. S. Kumar", "contact": "0452-2581144" }
+      ],
+      "wards": ["K. Pudur","Sellur","Thathaneri","Madurai East","Madurai West"],
+      "google_maps": "https://goo.gl/maps/bbbbbb"
+    },
+    {
+      "area": "Madurai",
+      "office_name": "TNEB Section Office – Thathaneri",
+      "officer_name": "Mr. P. Rajesh",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0452-2591123",
+      "email": "aethathaneri@tnebnet.org",
+      "address": "Thathaneri Main Road, Madurai – 625009",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Madurai EDC – Metro",
+      "grievance_contact": "cgrfmdua@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. R. Arul", "contact": "0452-2591133" },
+        { "name": "Mr. K. Ravi", "contact": "0452-2591144" }
+      ],
+      "wards": ["Thathaneri","Madurai East","Madurai West","Melur","Usilampatti"],
+      "google_maps": "https://goo.gl/maps/ccccc"
+    },
+    {
+      "area": "Dindigul",
+      "office_name": "TNEB Section Office – Dindigul Town",
+      "officer_name": "Ms. S. Lakshmi",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0451-2461123",
+      "email": "aedindigul@tnebnet.org",
+      "address": "Meenakshi Nayakkan Patty Post, Dindigul – 624002",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Dindigul EDC",
+      "grievance_contact": "cgrfdgl@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. A. Kumar", "contact": "0451-2461133" },
+        { "name": "Mr. R. Senthil", "contact": "0451-2461144" }
+      ],
+      "wards": ["Dindigul Town","Oddanchatram","Palani","Athoor","Batlagundu"],
+      "google_maps": "https://goo.gl/maps/ddddd"
+    },
+    {
+      "area": "Dindigul",
+      "office_name": "TNEB Section Office – Palani",
+      "officer_name": "Mr. V. Rajesh",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0451-2461155",
+      "email": "aepalani@tnebnet.org",
+      "address": "Palani Main Road, Dindigul – 624601",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Dindigul EDC",
+      "grievance_contact": "cgrfdgl@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. M. Arul", "contact": "0451-2461166" },
+        { "name": "Mr. K. Ravi", "contact": "0451-2461177" }
+      ],
+      "wards": ["Palani","Oddanchatram","Athoor","Kodaikanal","Batlagundu"],
+      "google_maps": "https://goo.gl/maps/eeeee"
+    },
+    {
+      "area": "Dindigul",
+      "office_name": "TNEB Section Office – Athoor",
+      "officer_name": "Mr. P. Arul",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0451-2461188",
+      "email": "aeathoor@tnebnet.org",
+      "address": "Athoor Main Road, Dindigul – 624701",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Dindigul EDC",
+      "grievance_contact": "cgrfdgl@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. S. Kumar", "contact": "0451-2461199" },
+        { "name": "Mr. V. Murugan", "contact": "0451-2461200" }
+      ],
+      "wards": ["Athoor","Oddanchatram","Palani","Batlagundu","Kodaikanal"],
+      "google_maps": "https://goo.gl/maps/fffff"
+    },
+    {
+      "area": "Theni",
+      "office_name": "TNEB Section Office – Theni Main Road",
+      "officer_name": "Mr. P. Rajesh",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "04546-252211",
+      "email": "aetheni@tnebnet.org",
+      "address": "NRT Nagar Main Road, Theni – 625531",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Theni EDC",
+      "grievance_contact": "cgrftheni@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. A. Kumar", "contact": "04546-252212" },
+        { "name": "Mr. S. Ravi", "contact": "04546-252213" }
+      ],
+      "wards": ["Theni","Cumbum","Bodinayakanur","Periyakulam","Chinnamanur"],
+      "google_maps": "https://goo.gl/maps/ttttt"
+    },
+    {
+      "area": "Theni",
+      "office_name": "TNEB Section Office – Bodinayakanur",
+      "officer_name": "Ms. N. Devi",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "04546-252221",
+      "email": "aebodinayakanur@tnebnet.org",
+      "address": "Bodinayakanur Main Road, Theni – 625513",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Theni EDC",
+      "grievance_contact": "cgrftheni@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. K. Selvam", "contact": "04546-252222" },
+        { "name": "Mr. P. Ganesan", "contact": "04546-252223" }
+      ],
+      "wards": ["Bodinayakanur","Cumbum","Periyakulam","Chinnamanur","Gudalur"],
+      "google_maps": "https://goo.gl/maps/uuuuu"
+    },
+    {
+      "area": "Theni",
+      "office_name": "TNEB Section Office – Periyakulam",
+      "officer_name": "Mr. V. Rajesh",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "04546-252231",
+      "email": "aeperiyakulam@tnebnet.org",
+      "address": "Periyakulam Main Road, Theni – 625601",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Theni EDC",
+      "grievance_contact": "cgrftheni@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. R. Arul", "contact": "04546-252232" },
+        { "name": "Mr. K. Ravi", "contact": "04546-252233" }
+      ],
+      "wards": ["Periyakulam","Theni","Bodinayakanur","Chinnamanur","Cumbum"],
+      "google_maps": "https://goo.gl/maps/vvvvv"
+    },
+    {
+      "area": "Sivakasi",
+      "office_name": "TNEB Section Office – Sivakasi",
+      "officer_name": "Mr. S. Kumar",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "04562-223344",
+      "email": "aesivakasi@tnebnet.org",
+      "address": "Sivakasi Main Road, Sivakasi – 626123",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Virudhunagar EDC",
+      "grievance_contact": "cgrfsiv@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. P. Rajesh", "contact": "04562-223355" },
+        { "name": "Mr. V. Murugan", "contact": "04562-223366" }
+      ],
+      "wards": ["Sivakasi","Virudhunagar","Rajapalayam","Sattur","Srivilliputhur"],
+      "google_maps": "https://goo.gl/maps/wwwww"
+    },
+    {
+      "area": "Trichy",
+      "office_name": "TNEB Section Office – Trichy Central",
+      "officer_name": "Mr. R. Selvam",
+      "designation": "Assistant Engineer (AE)",
+      "contact_number": "0431-2451123",
+      "email": "aetricentral@tnebnet.org",
+      "address": "Central Main Road, Trichy – 620001",
+      "working_hours": "Mon–Sat, 10:00 AM – 5:00 PM",
+      "division": "Trichy EDC",
+      "grievance_contact": "cgrftrichy@tnebnet.org",
+      "line_men": [
+        { "name": "Mr. K. Arul", "contact": "0431-2451133" },
+        { "name": "Mr. P. Ganesan", "contact": "0431-2451144" }
+      ],
+      "wards": ["Trichy Central","Srirangam","Thillai Nagar","Bhoothapandi","Ariyamangalam"],
+      "google_maps": "https://goo.gl/maps/xxxxx1"
+    }
+  ]
+};
+
+const searchBtn = document.getElementById('search-button');
+const searchBar = document.getElementById('search-bar');
+const resultsDiv = document.getElementById('results');
+
+function searchOffices() {
+  const query = searchBar.value.trim().toLowerCase();
+  resultsDiv.innerHTML = '';
+  if (!query) return;
+
+  const matched = data.eb_offices.filter(office =>
+    office.wards.some(ward => ward.toLowerCase() === query)
+  );
+
+  if (matched.length === 0) {
+    resultsDiv.innerHTML = '<p>No results found.</p>';
+    return;
+  }
+
+  matched.forEach(office => {
+    const matchedWards = office.wards.filter(ward => ward.toLowerCase() === query);
+    const div = document.createElement('div');
+    div.className = 'office';
+    div.innerHTML = `
+      <h2>${office.office_name}</h2>
+      <p><strong>Officer:</strong> ${office.officer_name} (${office.designation})</p>
+      <p><strong>Contact:</strong> ${office.contact_number}, <strong>Email:</strong> ${office.email}</p>
+      <p><strong>Address:</strong> ${office.address}</p>
+      <p><strong>Working Hours:</strong> ${office.working_hours}</p>
+      <p><strong>Division:</strong> ${office.division}</p>
+      <p><strong>Grievance Contact:</strong> ${office.grievance_contact}</p>
+      <p><strong>Line Men:</strong> ${office.line_men.map(lm => lm.name + ' (' + lm.contact + ')').join(', ')}</p>
+      <p><strong>Ward:</strong> ${matchedWards.join(', ')}</p>
+      <p><a href="${office.google_maps}" target="_blank">View on Google Maps</a></p>
+    `;
+    resultsDiv.appendChild(div);
+  });
+}
+
+searchBtn.addEventListener('click', searchOffices);
+searchBar.addEventListener('keypress', e => { if (e.key === 'Enter') searchOffices(); });
+</script>
+
+</body>
+</html>
